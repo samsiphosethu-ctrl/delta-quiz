@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Your Delta Match</title>
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+ 
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: #ffffff;
+  color: #1B3A2F;
+}
+ 
+#wrap {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 28px 20px 36px;
+}
+ 
+/* ── SCREENS ── */
+.screen {
+  display: none;
+}
+.screen.active {
+  display: block;
+  animation: popIn 0.28s ease;
+}
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+ 
+/* ── INTRO ── */
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: #1B3A2F;
+  background: #E3EDE5;
+  padding: 5px 13px;
+  border-radius: 20px;
+  margin-bottom: 18px;
+}
+ 
+.intro-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1B3A2F;
+  line-height: 1.18;
+  margin-bottom: 10px;
+}
+ 
+.intro-sub {
+  font-size: 15px;
+  color: #527062;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+ 
+/* ── PROGRESS ── */
+.prog {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 24px;
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #D0E4D4;
+  flex-shrink: 0;
+  transition: background 0.3s;
+}
+.dot.on {
+  background: #1B3A2F;
+}
+.prog-lbl {
+  font-size: 12px;
+  color: #90AE9A;
+  font-weight: 500;
+  margin-left: 4px;
+}
+ 
+/* ── QUESTION ── */
+.q-title {
+  font-size: 19px;
+  font-weight: 700;
+  color: #1B3A2F;
+  line-height: 1.35;
+  margin-bottom: 18px;
+}
+ 
+/* ── OPTIONS ── */
+.opts {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+ 
+.opt {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px 18px;
+  background: #ffffff;
+  border: 1.5px solid rgba(27, 58, 47, 0.16);
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: border-color 0.18s, background 0.18s, transform 0.12s;
+}
+.opt:hover {
+  border-color: #1B3A2F;
+  background: #F2F8F3;
+  transform: translateY(-2px);
+}
+.opt:active {
+  transform: translateY(0);
+}
+ 
+.emo {
+  font-size: 28px;
+  width: 36px;
+  text-align: center;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.opt-txt strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1B3A2F;
+  margin-bottom: 2px;
+}
+.opt-txt span {
+  font-size: 13px;
+  color: #668076;
+  line-height: 1.4;
+}
+ 
+/* ── SHARED BUTTONS ── */
+.btn {
+  display: block;
+  width: 100%;
+  padding: 14px 18px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  transition: background 0.2s, transform 0.1s;
+}
+.btn:active {
+  transform: scale(0.98);
+}
+.btn-green {
+  background: #1B3A2F;
+  color: #ffffff;
+}
+.btn-green:hover {
+  background: #25503e;
+}
+.btn-ghost {
+  background: transparent;
+  border: 1.5px solid rgba(27, 58, 47, 0.2);
+  color: #1B3A2F;
+  font-size: 13px;
+  margin-top: 10px;
+}
+.btn-ghost:hover {
+  background: #F2F8F3;
+  border-color: rgba(27, 58, 47, 0.5);
+}
+ 
+/* ── RESULT CARD ── */
+.result-card {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1.5px solid rgba(27, 58, 47, 0.12);
+  margin-bottom: 14px;
+}
+.rhead {
+  background: #1B3A2F;
+  padding: 20px 22px;
+}
+.r-lbl {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 4px;
+}
+.r-name {
+  font-size: 26px;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.1;
+}
+.r-tag {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.65);
+  margin-top: 4px;
+}
+.rbody {
+  padding: 18px 22px;
+}
+.rbody p {
+  font-size: 14px;
+  color: #3D6050;
+  line-height: 1.7;
+  margin-bottom: 18px;
+}
+ 
+/* Result-specific tints */
+.d10 .rbody { background: #EDF5EE; }
+.d9  .rbody { background: #F0EBF7; }
+ 
+/* ── DISCLAIMER ── */
+.disc {
+  font-size: 11px;
+  color: #98B4A4;
+  text-align: center;
+  line-height: 1.6;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(27, 58, 47, 0.08);
+}
+ 
+/* ── RESPONSIVE ── */
+@media (max-width: 360px) {
+  .intro-title { font-size: 24px; }
+  .r-name { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+ 
+<div id="wrap">
+ 
+  <!-- ── INTRO ── -->
+  <div class="screen active" id="s-intro">
+    <p class="badge">Quick Quiz</p>
+    <h2 class="intro-title">Find Your<br>Delta Match</h2>
+    <p class="intro-sub">Two questions. Figure out which cannabinoid fits where you are right now.</p>
+    <button class="btn btn-green" onclick="goTo('s-q1')">Get Started</button>
+  </div>
+ 
+  <!-- ── Q1 ── -->
+  <div class="screen" id="s-q1">
+    <div class="prog">
+      <div class="dot on"></div>
+      <div class="dot"></div>
+      <span class="prog-lbl">Question 1 of 2</span>
+    </div>
+    <h3 class="q-title">When are you planning to use it?</h3>
+    <div class="opts">
+      <button class="opt" onclick="pick(1,'A')">
+        <span class="emo">&#9728;&#65039;</span>
+        <div class="opt-txt">
+          <strong>This Afternoon</strong>
+          <span>I still have a day to finish</span>
+        </div>
+      </button>
+      <button class="opt" onclick="pick(1,'B')">
+        <span class="emo">&#127769;</span>
+        <div class="opt-txt">
+          <strong>Tonight</strong>
+          <span>I'm ready to wind down</span>
+        </div>
+      </button>
+    </div>
+  </div>
+ 
+  <!-- ── Q2 ── -->
+  <div class="screen" id="s-q2">
+    <div class="prog">
+      <div class="dot on"></div>
+      <div class="dot on"></div>
+      <span class="prog-lbl">Question 2 of 2</span>
+    </div>
+    <h3 class="q-title">What kind of experience are you after?</h3>
+    <div class="opts">
+      <button class="opt" onclick="pick(2,'A')">
+        <span class="emo">&#10024;</span>
+        <div class="opt-txt">
+          <strong>Light and Social</strong>
+          <span>Keep me present and in the world</span>
+        </div>
+      </button>
+      <button class="opt" onclick="pick(2,'B')">
+        <span class="emo">&#127807;</span>
+        <div class="opt-txt">
+          <strong>Deep and Heavy</strong>
+          <span>Full unwind mode</span>
+        </div>
+      </button>
+    </div>
+  </div>
+ 
+  <!-- ── RESULTS ── -->
+  <div class="screen" id="s-result">
+ 
+    <!-- AA: afternoon + light = Delta-10 -->
+    <div id="r-AA" class="result-card d10" style="display:none;">
+      <div class="rhead">
+        <div class="r-lbl">Your Match</div>
+        <div class="r-name">Delta-10 THC</div>
+        <div class="r-tag">Your afternoon pick</div>
+      </div>
+      <div class="rbody">
+        <p>Cerebral, light, and functional. Delta-10 THC is built for afternoons when you still have things to do — keeps things moving without taking over.</p>
+        <a class="btn btn-green" href="https://mood.com/blog/delta-10-thc-daytime-energy-and-focus" target="_blank" rel="noopener noreferrer">Explore Delta-10 THC</a>
+      </div>
+    </div>
+ 
+    <!-- AB: afternoon + deep = Delta-10 for now -->
+    <div id="r-AB" class="result-card d10" style="display:none;">
+      <div class="rhead">
+        <div class="r-lbl">Your Match</div>
+        <div class="r-name">Delta-10 THC</div>
+        <div class="r-tag">A lighter touch for now</div>
+      </div>
+      <div class="rbody">
+        <p>You want something real but there's still day left. Delta-10 THC's lower ceiling keeps the experience softer while you finish up. Save Delta-9 THC for when the evening fully arrives.</p>
+        <a class="btn btn-green" href="https://mood.com/blog/what-is-delta-10-thc" target="_blank" rel="noopener noreferrer">What Is Delta-10 THC?</a>
+      </div>
+    </div>
+ 
+    <!-- BA: evening + light = Delta-10 still works -->
+    <div id="r-BA" class="result-card d10" style="display:none;">
+      <div class="rhead">
+        <div class="r-lbl">Your Match</div>
+        <div class="r-name">Delta-10 THC</div>
+        <div class="r-tag">Light even after dark</div>
+      </div>
+      <div class="rbody">
+        <p>Evening doesn't have to mean heavy. Delta-10 THC's lower ceiling keeps things lighter and more cerebral. Right for when you want to unwind without fully switching off.</p>
+        <a class="btn btn-green" href="https://mood.com/blog/what-is-delta-10-thc" target="_blank" rel="noopener noreferrer">What Is Delta-10 THC?</a>
+      </div>
+    </div>
+ 
+    <!-- BB: evening + deep = Delta-9 -->
+    <div id="r-BB" class="result-card d9" style="display:none;">
+      <div class="rhead">
+        <div class="r-lbl">Your Match</div>
+        <div class="r-name">Delta-9 THC</div>
+        <div class="r-tag">Your evening pick</div>
+      </div>
+      <div class="rbody">
+        <p>Body-led, heavier, and built for the full wind-down. Delta-9 THC is the one most people reach for when the day is done and there's nowhere else to be.</p>
+        <a class="btn btn-green" href="https://mood.com/product/morning-delta-9-thc-gummies" target="_blank" rel="noopener noreferrer">Grab a 10-count of Morning Delta-9 THC Gummies for $29</a>
+      </div>
+    </div>
+ 
+    <button class="btn btn-ghost" onclick="restart()">&#8592; Start Over</button>
+ 
+    <p class="disc">
+      Must be 21+ to purchase. Hemp-derived cannabinoids may cause you to fail a workplace drug test.
+      Do not operate a vehicle or heavy machinery after consuming cannabinoid products.
+    </p>
+ 
+  </div>
+  <!-- end #s-result -->
+ 
+</div>
+<!-- end #wrap -->
+ 
+<script>
+var a1 = null;
+var a2 = null;
+ 
+function goTo(id) {
+  var screens = document.querySelectorAll('.screen');
+  for (var i = 0; i < screens.length; i++) {
+    screens[i].classList.remove('active');
+  }
+  document.getElementById(id).classList.add('active');
+  ping();
+}
+ 
+function pick(q, v) {
+  if (q === 1) {
+    a1 = v;
+    goTo('s-q2');
+  } else {
+    a2 = v;
+    showResult();
+  }
+}
+ 
+function showResult() {
+  var ids = ['r-AA', 'r-AB', 'r-BA', 'r-BB'];
+  for (var i = 0; i < ids.length; i++) {
+    document.getElementById(ids[i]).style.display = 'none';
+  }
+  var key = 'r-' + a1 + a2;
+  var target = document.getElementById(key);
+  if (target) {
+    target.style.display = 'block';
+  }
+  goTo('s-result');
+}
+ 
+function restart() {
+  a1 = null;
+  a2 = null;
+  goTo('s-intro');
+}
+ 
+function ping() {
+  setTimeout(function () {
+    var h = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight
+    );
+    window.parent.postMessage(h, '*');
+  }, 60);
+}
+ 
+window.addEventListener('load', ping);
+window.addEventListener('resize', ping);
+</script>
+ 
+</body>
+</html>
